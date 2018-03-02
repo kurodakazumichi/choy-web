@@ -378,9 +378,154 @@ class cApp
     this.isAdmin = (location.search == '?admin');
   }
 
+  /**
+  * 初期化(各種オブジェクトの初期化やイベントの設定を行う。)
+  */
+  init()
+  {
+    var me = this;
+
+    this.initAdmin();
+    this.initTab();     // ※Editor生成より前にTab処理を済ませないとおかしくなる。
+    this.initEditors();
+    this.initLoader();
+    this.initMixed();
+
+    // 設問やエディタの状態を整える。(sessionデータがあればそこから復元される)
+    this.setQuestion(this.data.Q);
+    this.editors.reset(this.data.E);
+    this.editors.focus('h');
+  }
+
+  /**
+  * 管理者モードの場合のみ行う初期化処理。
+  * 管理者モードでは、このページで読み込むための問題ファイルの作成が行える。
+  * そのための入力フォーム(タイトルや概要、説明)および出力ボタンなどを生成する。
+  */
+  initAdmin()
+  {
+    // 管理者モードじゃない時は何も処理をしない。
+    if(!this.isAdmin) return;
+
+    // 自身のエイリアス
+    var me = this;
+
+    // 管理者モードのみの入力項目を取得
+    var form = {
+      title: $('input[name=title]'),
+      desc : $('textarea[name=description]'),
+      ref  : $('textarea[name=reference]')
+    };
+
+    // 管理者要素を可視化
+    $('.admin').show();
+
+    // sessionデータがあれば入力値を復元。
+    form.title.val(this.data.title);
+    form.desc.val(this.data.desc);
+    form.ref.val(this.data.ref);
+
+    /********** ここから下はイベントの設定　**********/
+
+    // keyup: タイトルの内容を反映しつつ、storageに保存。
+    form.title.on('keyup', function(){
+      var v = $(this).val();
+      me.setTitle(v);
+      me.data.title = v;
+    });
+
+    // keyup: 概要の内容を反映しつつ、storageに保存。
+    form.desc.on('keyup', function(){
+      var v = $(this).val();
+      me.setDesc(v);
+      me.data.desc = v;
+    });
+
+    // keyup: 解説の内容を反映しつつ、storageに保存。
+    form.ref.on('keyup', function(){
+      var v = $(this).val();
+      me.setRefer(v);
+      me.data.ref = v;
+    });
+
+    // click: 入力内容をまとめて問題テキストファイルを生成、ダウンロードさせる。
+    $('#download').on('click', function()
+    {
+      var data = "";
+      var br   = '\n';
+
+      // titleを追加
+      data += ":title" + br;
+      data += form.title.val() + br;
+
+      // desc
+      data += ":desc" + br;
+      data += form.desc.val() + br;
+
+      // HTML
+      data += ":html" + br;
+      data += me.editors.html + br;
+
+      // css
+      data += ":css" + br;
+      data += me.editors.css + br;
+
+      // js
+      data += ":js" + br;
+      data += me.editors.js + br;
+
+      // reference
+      data += ":ref" + br;
+      data += form.ref.val() + br;
+
+      // href要素にオブジェクトURLを指定することでダウンロードさせられる。
+      var blob = new Blob([data], { "type" : "text/plain" });
+      $(this).attr({
+        href     :window.URL.createObjectURL(blob),
+        download :"question.md"
+      });
+
+    });
+  }
+
+  /**
+  * タブ要素の初期化(タブ化とイベントの設定)
+  */
+  initTab()
+  {
+    this.tabs = $("#editors").tabs();
+    this.tabs.tabs({
+      activate:this.onActivateTabs.bind(this)
+    });
+  }
+
+  /**
+  * タブがアクティブになった時の処理
+  */
+  onActivateTabs(e, ui)
+  {
+    // アクティブになったタブに含まれるエディターにfocusする。
+    var id = '#' + ui.newPanel[0].id;
+    this.editors.focus($(id).data('type'));;
+  }
+
+  /**
+  * エディタの初期化(エディター化とイベントの設定)
+  */
+  initEditors()
+  {
+    this.editors.init();
+    this.addEventEditors();
+  }
+
+  /**
+  * エディターのイベントを設定。
+  */
   addEventEditors()
   {
     var me = this;
+
+    // エディタに変更があった際に、リアルタイムに反映しつつ、storageへ内容を保存する。
     this.editors.h.on('change',function(){
       me.preview.html = me.data.html = me.editors.html;
     });
@@ -389,24 +534,84 @@ class cApp
       me.preview.css = me.data.css = me.editors.css;
     });
 
+    // javascriptはpreviewに即時反映しない。(入力中では構文エラーが多発するため)
     this.editors.j.on('change', function(){
       me.data.js = me.editors.js;
     });
-
   }
 
-  addEventTabs(){
-    this.tabs.tabs({
-      activate:function(e, ui){
-        var id = '#' + ui.newPanel[0].id;
-        this.editors.focus($(id).data('type'));;
+  /**
+  * ローダーの初期化
+  */
+  initLoader()
+  {
+    var me = this;
 
-      }.bind(this)
+    // 共通処理(common func)
+    var cfn = function(e, ui) {
+      e.stopPropagation();
+      e.preventDefault();
+      (ui) && $(ui).toggleClass('active');
+    };
+
+    // ドラッグ＆ドロップで問題を読み込めるようにイベントを設定。
+    var loader = $('#loader')
+      .on('dragenter', function(e){ cfn(e, this); })
+      .on('dragleave', function(e){ cfn(e, this); })
+      .on('dragover' , function(e){ cfn(e, null); })
+      .on('drop'     , function(e){ cfn(e, this); me.loadfile(e); });
+  }
+
+  /**
+  * 問題ファイルのロード処理
+  */
+  loadfile(e)
+  {
+    var me = this;
+    var f = e.originalEvent.dataTransfer.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function(e){
+      var data = me.data.loadQuestion(e.target.result);
+      me.setQuestion(data);
+    };
+
+    reader.readAsText(f);
+  }
+
+  /**
+  * その他、雑多な要素の初期化
+  */
+  initMixed()
+  {
+    // 答えを見る機能の設定
+    this.addEventChangeEditorMode();
+
+    // Answerの表示モード変更機能の設定
+    this.addEventChangeAnswerMode();
+
+    // リフレッシュ機能の設定
+    $('#refresh').on('click', this.refresh.bind(this));
+
+    // JS実行機能の設定
+    $('#apply-js').on('click', function(){
+      me.preview.js = me.editors.js;
+    });
+
+    // 解説のアコーディオン機能設定
+    $('#reference h2').on('click', function(){
+      $('#reference div').slideToggle();
+      $('#reference h2').toggleClass('close');
     });
   }
 
-  addEventChangeEditorMode(){
+  /**
+  * 答えを見る機能の設定。
+  */
+  addEventChangeEditorMode()
+  {
     var me = this;
+
     // 答えを見る機能の実装
     $("#change-editor-mode").on('click', function(){
 
@@ -428,6 +633,9 @@ class cApp
     });
   }
 
+  /**
+  * Answerの表示切り替え機能の設定。
+  */
   addEventChangeAnswerMode()
   {
     var me = this;
@@ -446,113 +654,42 @@ class cApp
     $('#change-answer-mode-3').on('click', function(){
       me.answer.init(me.data.Q);
     });
-
   }
 
   /**
-  * 管理者モードの場合のみ行う初期化処理。
-  * 管理者モードでは、このページで読み込むための問題ファイルの作成が行える。
-  * そのための入力フォーム(タイトルや概要、説明)および出力ボタンなどを生成する。
+  * 設問データを設定する。
   */
-  initAdmin()
+  setQuestion(data)
   {
-    if(!this.isAdmin) return;
-
-    var me = this;
-    var form = {
-      title: $('input[name=title]'),
-      desc : $('textarea[name=description]'),
-      ref  : $('textarea[name=reference]')
-    };
-
-
-    $('.admin').show();
-    form.title.val(this.data.title);
-    form.desc.val(this.data.desc);
-    form.ref.val(this.data.ref);
-
-
-    $('input[name=title]').on('keyup', function(){
-      var v = $(this).val();
-      me.setTitle(v);
-      me.data.title = v;
-    });
-
-    $('textarea[name=description]').on('keyup', function(){
-      var v = $(this).val();
-      me.setDesc(v);
-      me.data.desc = v;
-    });
-
-    $('textarea[name=reference]').on('keyup', function(){
-      var v = $(this).val();
-      me.setRefer(v);
-      me.data.ref = v;
-    });
-
-    $('#download').on('click', function(){
-      var data = "";
-      var br   = '\n';
-
-      // titleを追加
-      data += ":title" + br;
-      data += $('input[name=title]').val() + br;
-
-      // desc
-      data += ":desc" + br;
-      data += $('textarea[name=description]').val() + br;
-
-      // HTML
-      data += ":html" + br;
-      data += me.editors.html + br;
-
-      // css
-      data += ":css" + br;
-      data += me.editors.css + br;
-
-      // js
-      data += ":js" + br;
-      data += me.editors.js + br;
-
-      // reference
-      data += ":ref" + br;
-      data += $('textarea[name=reference]').val() + br;
-
-      var blob = new Blob([data], { "type" : "text/plain" });
-      $(this).attr({href:window.URL.createObjectURL(blob),download:"question.md"});
-    });
+    this.setTitle(data.title);
+    this.setDesc(data.desc);
+    this.setRefer(data.ref);
+    this.answer.init(data);
+    this.editors.reset();
   }
 
-  init(){
-    var me = this;
+  /**
+  * タイトルを設定する。
+  */
+  setTitle(text){
+    text = (text)? text : "no data";
+    this.title.text(text);
+  }
 
-    this.initAdmin();
+  /**
+  * 概要を設定する。
+  */
+  setDesc(markdown){
+    markdown = (markdown)? markdown : "no data";
+    this.desc.html(marked(markdown));
+  }
 
-    this.initTab();
-    this.addEventTabs();
-    this.editors.init();
-
-    this.addEventEditors();
-    this.setQuestion(this.data.Q);
-
-    this.editors.reset(this.data.E);
-    this.editors.focus('h');
-
-    $('#apply-js').on('click', function(){
-      me.preview.js = me.editors.js;
-    });
-
-    this.initLoader();
-    this.addEventChangeEditorMode();
-    this.addEventChangeAnswerMode();
-
-    $('#reference h2').on('click', function(){
-      $('#reference div').slideToggle();
-      $('#reference h2').toggleClass('close');
-    });
-
-    $('#refresh').on('click', this.refresh.bind(this));
-
+  /**
+  * 解説を設定する。
+  */
+  setRefer(markdown){
+    markdown = (markdown)? markdown : "no data";
+    this.ref.html(marked(markdown));
   }
 
   /**
@@ -564,66 +701,6 @@ class cApp
     this.setQuestion(this.data.Q);
     this.editors.readonly = false;
   }
-
-  initTab(){
-    this.tabs = $("#editors").tabs();
-  }
-  initLoader(){
-    var me = this;
-    var loader = $('#loader');
-    loader.on('dragenter', function(e){
-      e.stopPropagation();
-      e.preventDefault();
-      $(this).toggleClass('active');
-    });
-    loader.on('dragleave', function(e){
-      e.stopPropagation();
-      e.preventDefault();
-      $(this).toggleClass('active');
-    });
-    loader.on('dragover', function(e){
-      e.stopPropagation();
-      e.preventDefault();
-    });
-    loader.on('drop', function(e){
-      e.stopPropagation();
-      e.preventDefault();
-      var f = e.originalEvent.dataTransfer.files[0];
-
-
-      var reader = new FileReader();
-
-      reader.onload = function(e){
-        var data = me.data.loadQuestion(e.target.result);
-        me.setQuestion(data);
-      };
-      reader.readAsText(f);
-
-
-      $(this).toggleClass('active');
-    });
-  }
-  setTitle(text){
-    text = (text)? text : "no data";
-    this.title.text(text);
-  }
-  setDesc(markdown){
-    markdown = (markdown)? markdown : "no data";
-    this.desc.html(marked(markdown));
-  }
-  setRefer(markdown){
-    markdown = (markdown)? markdown : "no data";
-    this.ref.html(marked(markdown));
-  }
-  setQuestion(data)
-  {
-    this.setTitle(data.title);
-    this.setDesc(data.desc);
-    this.setRefer(data.ref);
-    this.answer.init(data);
-    this.editors.reset();
-  }
-
 }
 
 $(function(){
