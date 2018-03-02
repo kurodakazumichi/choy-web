@@ -556,12 +556,15 @@ class cApp
     });
   }
   setTitle(text){
+    text = (text)? text : "no data";
     this.title.text(text);
   }
   setDesc(markdown){
+    markdown = (markdown)? markdown : "no data";
     this.desc.html(marked(markdown));
   }
   setRefer(markdown){
+    markdown = (markdown)? markdown : "no data";
     this.ref.html(marked(markdown));
   }
   setQuestion(data)
