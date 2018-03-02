@@ -13,10 +13,25 @@
     <script src="./assets/main.js"></script>
   </head>
   <body>
+    <div id="menubar">
+      <div class="left">
+        <a id="change-editor-mode" class="button">See the Answer.</a>
+        <b id="editors-status">Editor::</b>
+      </div>
+      <div class="center">
+        <div id="loader">
+          問題ファイルをここにドロップ
+        </div>
+      </div>
+      <div class="right">
+        <a id="refresh" class="button">refresh</a>
+        <a id="download" class="admin button">download</a>
+      </div>
+    </div>
     <div id="wrapper">
-      <div id="loader">問題ファイルをここにドロップしてください。</div>
 
-      <h1 id="title">問題が読み込まれていません。</h1>
+
+      <h1 id="title" class="ui-widget-header ui-corner-all">問題が読み込まれていません。</h1>
       <div id="description" class="markdown">
         問題の説明が表示されるところだよ。
       </div>
@@ -50,11 +65,6 @@
                 <textarea name="reference"></textarea>
               </div>
             </div>
-          </div>
-          <div id="editor-menu">
-            <button id="change-editor-mode">See the Answer.</button>
-            <span id="editors-status">editable</span>
-            <a id="download" class="admin" href="#">download</a>
           </div>
         </div>
 

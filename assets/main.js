@@ -81,6 +81,7 @@ class cEditors
   */
   constructor(){
     this.e = {};
+    this.status;
   }
 
   /**
@@ -91,6 +92,7 @@ class cEditors
     this.e.h = this.create("html-editor", "html");
     this.e.c = this.create("css-editor" , "css");
     this.e.j = this.create("js-editor"  , "javascript");
+    this.status  = $('#editors-status');
   }
 
   /**
@@ -131,13 +133,15 @@ class cEditors
   */
   set readonly(enable)
   {
+    var c = "readonly";
+
     // 全エディターに適用
     $.each(this.e, function(key, e){
       e.setReadOnly(enable);
-      (enable)? e.setStyle('readonly') : e.unsetStyle('readonly');
+      (enable)? e.setStyle(c) : e.unsetStyle(c);
     });
 
-    $('#editors-status').text((enable)? 'readonly':'editable');
+    (enable)? this.status.addClass(c) : this.status.removeClass(c);
   }
 
   // HTMLエディタの内容へのアクセッサ
@@ -489,6 +493,7 @@ class cApp
 
     $('#reference h2').on('click', function(){
       $('#reference div').slideToggle();
+      $('#reference h2').toggleClass('close');
     });
 
   }

@@ -1,34 +1,91 @@
-/* 全体を包むラッパー */
-#wrapper {
-  padding:1em;
-  margin-bottom: 100px;
+/*
+* メニューバー
+*/
+#menubar {
+  background:#000;
+  color:white;
+  width:100%;
+  height:40px;
+  line-height: 37px;
+  position: fixed;
+  top:0;
+  left:0;
+  z-index: 100;
+}
+
+#menubar .left{
+  position: absolute;
+  left:.3em;
+}
+#menubar .center {
+  position: absolute;
+  left:30%;
+  right:30%;
+}
+#menubar .right{
+  position: absolute;
+  right:.3em;
 }
 
 /**
 * 問題ファイルを読み込むボックスに関するスタイル。
 */
 #loader {
-  border:2px dashed #888;
-  background:#ccc;
+  color:black;
+  font-size: 13px;
+  line-height: 30px;
+  background:#fff;
   text-align: center;
-  padding:0.5em 0;
-  font-size: 2em;
-  margin-bottom: 1em;
   transition: all 300ms 0s ease;
+  margin-top:5px;
+  height:30px;
 }
-
 #loader.active {
   border-color: #0a0;
   background: #cfc;
+}
+
+/* メニューバー内のボタン */
+#menubar .button
+{
+  border:1px solid #aaa;
+  text-decoration: none;
+  color:black;
+  padding:.3em;
+  background:#eee;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#menubar .button:hover{
+  box-shadow: 0 0 3px 3px #ff0;
+}
+
+/* エディターの状態テキスト */
+#editors-status{
+  font-size: 12px;
+}
+#editors-status::after{
+  content: "editable";
+  color:#0ff;
+}
+#editors-status.readonly::after{
+  content:"readonly";
+  color:#f00;
+}
+
+
+/* 全体を包むラッパー */
+#wrapper {
+  padding:1em;
+  margin-top:40px;
+  margin-bottom: 100px;
 }
 
 /**
 * タイトルのスタイル
 */
 #title {
-  border:1px solid #aaaaaa;
-  background:#cccccc;
-  border-radius: 4px;
   font-size: 2em;
   margin-bottom: 10px;
   text-indent: .2em;
@@ -62,9 +119,6 @@
   height:400px;
 }
 
-#editors-status{
-  font-size: 11px;
-}
 
 /**
 * iframe関連のスタイル
@@ -80,7 +134,7 @@
 
 iframe{
   width:100%;
-  height:166px;
+  height:200px;
   margin-bottom: 1em;
   border:1px solid #ccc;
 }
@@ -99,8 +153,12 @@ iframe:last-child{
   margin-bottom: 1em;
 }
 
-#reference h2::after{
+#reference > h2::after{
   content: "+";
+  color:red;
+}
+#reference > h2.close::after{
+  content: "-";
   color:red;
 }
 
@@ -111,6 +169,36 @@ iframe:last-child{
   border:1px solid #aaa;
   border-radius: 4px;
   padding:.3em;
+}
+
+.markdown h1, .markdown h2 {
+  font-weight: bold;
+}
+
+.markdown ul{
+  list-style:circle;
+  margin-left:20px;
+}
+.markdown ol{
+  list-style: decimal;
+  margin-left: 20px;
+}
+
+.markdown strong {
+  color:#f00;
+  font-weight: bold;
+}
+.markdown em{
+  color:#0f0;
+  font-weight: bold;
+}
+.markdown code{
+  background:#000;
+  color:#0f0;
+}
+.markdown pre {
+  background:#000;
+  color:#0f0;
 }
 
 /* Ace Editorがreadonlyの時のスタイル。*/
@@ -137,14 +225,5 @@ iframe:last-child{
 .admin textarea{
   width:100%;
   height: 200px;
-}
-
-#download {
-  border:1px solid #aaa;
-  text-decoration: none;
-  color:black;
-  padding:.2em;
-  background:#abcdef;
-  font-size: 11px;
-  border-radius: 4px;
+  font-size: 12px;
 }
