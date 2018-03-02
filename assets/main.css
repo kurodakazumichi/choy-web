@@ -169,27 +169,40 @@ iframe:last-child{
   border:1px solid #aaa;
   border-radius: 4px;
   padding:.3em;
+  font-size:16px;
 }
 
 .markdown h1, .markdown h2 {
   font-weight: bold;
+  font-size: 26px;
+}
+
+.markdown p {
+  margin-bottom: 2em;
 }
 
 .markdown ul{
   list-style:circle;
   margin-left:20px;
 }
+.markdown ul li {
+  line-height: 30px;
+}
+
 .markdown ol{
   list-style: decimal;
   margin-left: 20px;
 }
+.markdown ol li{
+  line-height: 30px;
+}
 
 .markdown strong {
-  color:#f00;
+  color:#C7243A;
   font-weight: bold;
 }
 .markdown em{
-  color:#0f0;
+  color:#0086AB;
   font-weight: bold;
 }
 .markdown code{
