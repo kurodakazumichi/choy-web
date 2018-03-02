@@ -425,13 +425,13 @@ class cApp
 
     $('.admin').show();
 
-    $('input[name=title]').on('keydown', function(){
+    $('input[name=title]').on('keyup', function(){
       me.setTitle($(this).val());
     });
-    $('textarea[name=description]').on('keydown', function(){
+    $('textarea[name=description]').on('keyup', function(){
       me.setDesc($(this).val());
     });
-    $('textarea[name=reference]').on('keydown', function(){
+    $('textarea[name=reference]').on('keyup', function(){
       me.setRefer($(this).val());
     });
 
