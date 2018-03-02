@@ -177,24 +177,23 @@ iframe:last-child{
   font-size: 26px;
 }
 
-.markdown p {
-  margin-bottom: 2em;
+.markdown p, .markdown ul, .markdown ol {
+  margin-bottom: 1em;
+  line-height: 30px;
+}
+
+.markdown p:last-child{
+  margin: 0;
 }
 
 .markdown ul{
   list-style:circle;
   margin-left:20px;
 }
-.markdown ul li {
-  line-height: 30px;
-}
 
 .markdown ol{
   list-style: decimal;
   margin-left: 20px;
-}
-.markdown ol li{
-  line-height: 30px;
 }
 
 .markdown strong {
