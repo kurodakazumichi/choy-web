@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ちょいうぇぶ</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.17/marked.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="./assets/main.css">
+    <script src="./assets/main.js"></script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="loader">問題ファイルをここにドロップしてください。</div>
+
+      <h1 id="title">問題が読み込まれていません。</h1>
+      <div id="description" class="markdown">
+        問題の説明が表示されるところだよ。
+      </div>
+
+      <div class="contaier">
+        <div id="workspace">
+          <div id="editors">
+            <ul>
+              <li><a href="#tabs-1">HTML</a></li>
+              <li><a href="#tabs-2">CSS</a></li>
+              <li><a href="#tabs-3">JS</a></li>
+              <li class="admin"><a href="#tags-admin">Admin</a></li>
+            </ul>
+            <div id="tabs-1" data-type="h"><div class="editor" id="html-editor"></div></div>
+            <div id="tabs-2" data-type="c"><div class="editor" id="css-editor"></div></div>
+            <div id="tabs-3" data-type="j">
+              <div class="editor" id="js-editor"></div>
+              <button id="apply-js">実行</button>
+            </div>
+            <div id="tags-admin" class="admin">
+              <div>
+                <label for="title">タイトル</label>
+                <input type="text" name="title" autocomplete="off">
+              </div>
+              <div>
+                <label for="description">概要</label>
+                <textarea name="description"></textarea>
+              </div>
+              <div>
+                <label for="reference">解説</label>
+                <textarea name="reference"></textarea>
+              </div>
+            </div>
+          </div>
+          <div id="editor-menu">
+            <button id="change-editor-mode">See the Answer.</button>
+            <span id="editors-status">editable</span>
+            <a id="download" class="admin" href="#">download</a>
+          </div>
+        </div>
+
+        <div class="views">
+          <h2 class="ui-widget-header ui-corner-all">Preview</h2>
+          <iframe id="preview"></iframe>
+          <h2 class="ui-widget-header ui-corner-all">
+            <span>Answer</span>
+            <button id="change-answer-mode-1" title="htmlのみが有効になります。">HTML</button>
+            <button id="change-answer-mode-2" title="htmlとCSSのみが有効になります。">HTML+CSS</button>
+            <button id="change-answer-mode-3" title="htmlとCSSとJSが有効になります。">HTML+CSS+JS</button>
+          </h2>
+          <iframe id="answer"></iframe>
+        </div>
+      </div>
+      <div id="reference">
+        <h2 class="ui-widget-header ui-corner-all" title="クリックすると解説が表示されます。">解説</h2>
+        <div id="reference-text" class="markdown" style="display:none;"></div>
+      </div>
+    </div>
+
+
+  </body>
+</html>

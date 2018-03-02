@@ -1,0 +1,150 @@
+/* 全体を包むラッパー */
+#wrapper {
+  padding:1em;
+  margin-bottom: 100px;
+}
+
+/**
+* 問題ファイルを読み込むボックスに関するスタイル。
+*/
+#loader {
+  border:2px dashed #888;
+  background:#ccc;
+  text-align: center;
+  padding:0.5em 0;
+  font-size: 2em;
+  margin-bottom: 1em;
+  transition: all 300ms 0s ease;
+}
+
+#loader.active {
+  border-color: #0a0;
+  background: #cfc;
+}
+
+/**
+* タイトルのスタイル
+*/
+#title {
+  border:1px solid #aaaaaa;
+  background:#cccccc;
+  border-radius: 4px;
+  font-size: 2em;
+  margin-bottom: 10px;
+  text-indent: .2em;
+}
+
+/**
+* 概要文のスタイル
+*/
+#description {
+  margin-bottom: 1em;
+}
+
+/**
+* editorとiframeを含むコンテナーの設定
+*/
+.contaier{
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin-bottom: 2em;
+}
+.contaier > div {
+  width:49%;
+}
+
+/**
+* editor関連のスタイル
+*/
+.editor {
+  width:100%;
+  height:400px;
+}
+
+#editors-status{
+  font-size: 11px;
+}
+
+/**
+* iframe関連のスタイル
+*/
+.views {
+  padding: .2em;
+}
+
+.views h2 {
+  margin:0 0 0.5em 0;
+  padding:0.2em;
+}
+
+iframe{
+  width:100%;
+  height:166px;
+  margin-bottom: 1em;
+  border:1px solid #ccc;
+}
+
+iframe:last-child{
+  margin:0;
+}
+
+
+/**
+* 解説関連のスタイル
+*/
+#reference h2 {
+  padding:.2em;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+
+#reference h2::after{
+  content: "+";
+  color:red;
+}
+
+/**
+* markdown共通のスタイル
+*/
+.markdown {
+  border:1px solid #aaa;
+  border-radius: 4px;
+  padding:.3em;
+}
+
+/* Ace Editorがreadonlyの時のスタイル。*/
+.ace_editor.readonly{
+  background:#ddd;
+}
+
+/**
+* 管理者用スタイル
+*/
+
+/* 初期で非表示にする。*/
+.admin {
+  display:none;
+}
+
+.admin label{
+  display:block;
+}
+
+.admin input[type=text]{
+  width:100%;
+}
+.admin textarea{
+  width:100%;
+  height: 200px;
+}
+
+#download {
+  border:1px solid #aaa;
+  text-decoration: none;
+  color:black;
+  padding:.2em;
+  background:#abcdef;
+  font-size: 11px;
+  border-radius: 4px;
+}
