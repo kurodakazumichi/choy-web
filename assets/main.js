@@ -229,6 +229,13 @@ class cData
     return (!item)? "" : item;
   }
 
+  /**
+  * 情報をクリアする。
+  */
+  clear(){
+    sessionStorage.clear();
+  }
+
   loadQuestion(f){
     var text = f.split(/\r\n|\r|\n/);
     var data = {};
@@ -496,6 +503,18 @@ class cApp
       $('#reference h2').toggleClass('close');
     });
 
+    $('#refresh').on('click', this.refresh.bind(this));
+
+  }
+
+  /**
+  * リフレッシュ(読み込んだ問題やエディタなどをクリアし綺麗にする。)
+  */
+  refresh()
+  {
+    this.data.clear();
+    this.setQuestion(this.data.Q);
+    this.editors.readonly = false;
   }
 
   initTab(){
