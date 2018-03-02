@@ -323,6 +323,36 @@ class cData
     return this.get('js');
   }
 
+  /**
+  * titleの内容を保存、取得するアクセッサ。(for Admin)
+  */
+  set title(text){
+    this.set('title', text);
+  }
+  get title(){
+    return this.get('title');
+  }
+
+  /**
+  * descriptionの内容を保存、取得するアクセッサ(for Admin)
+  */
+  set desc(text){
+    this.set('desc', text);
+  }
+  get desc(){
+    return this.get('desc');
+  }
+
+  /**
+  * referenceの内容を保存、取得するアクセッサ。(for Admin)
+  */
+  set ref(text){
+    this.set('ref', text);
+  }
+  get ref(){
+    return this.get('ref');
+  }
+
 }
 
 /*******************************************************************************
@@ -429,17 +459,35 @@ class cApp
     if(!this.isAdmin) return;
 
     var me = this;
+    var form = {
+      title: $('input[name=title]'),
+      desc : $('textarea[name=description]'),
+      ref  : $('textarea[name=reference]')
+    };
+
 
     $('.admin').show();
+    form.title.val(this.data.title);
+    form.desc.val(this.data.desc);
+    form.ref.val(this.data.ref);
+
 
     $('input[name=title]').on('keyup', function(){
-      me.setTitle($(this).val());
+      var v = $(this).val();
+      me.setTitle(v);
+      me.data.title = v;
     });
+
     $('textarea[name=description]').on('keyup', function(){
-      me.setDesc($(this).val());
+      var v = $(this).val();
+      me.setDesc(v);
+      me.data.desc = v;
     });
+
     $('textarea[name=reference]').on('keyup', function(){
-      me.setRefer($(this).val());
+      var v = $(this).val();
+      me.setRefer(v);
+      me.data.ref = v;
     });
 
     $('#download').on('click', function(){
