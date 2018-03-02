@@ -374,6 +374,8 @@ class cApp
     this.desc    = $('#description');
     this.ref     = $('#reference-text');
 
+    this.admin   = {};
+
     // URL末尾に'?admin'がついていたら管理者モードにする。
     this.isAdmin = (location.search == '?admin');
   }
@@ -411,7 +413,7 @@ class cApp
     var me = this;
 
     // 管理者モードのみの入力項目を取得
-    var form = {
+    this.admin = {
       title: $('input[name=title]'),
       desc : $('textarea[name=description]'),
       ref  : $('textarea[name=reference]')
@@ -421,28 +423,28 @@ class cApp
     $('.admin').show();
 
     // sessionデータがあれば入力値を復元。
-    form.title.val(this.data.title);
-    form.desc.val(this.data.desc);
-    form.ref.val(this.data.ref);
+    this.admin.title.val(this.data.title);
+    this.admin.desc.val(this.data.desc);
+    this.admin.ref.val(this.data.ref);
 
     /********** ここから下はイベントの設定　**********/
 
     // keyup: タイトルの内容を反映しつつ、storageに保存。
-    form.title.on('keyup', function(){
+    this.admin.title.on('keyup', function(){
       var v = $(this).val();
       me.setTitle(v);
       me.data.title = v;
     });
 
     // keyup: 概要の内容を反映しつつ、storageに保存。
-    form.desc.on('keyup', function(){
+    this.admin.desc.on('keyup', function(){
       var v = $(this).val();
       me.setDesc(v);
       me.data.desc = v;
     });
 
     // keyup: 解説の内容を反映しつつ、storageに保存。
-    form.ref.on('keyup', function(){
+    this.admin.ref.on('keyup', function(){
       var v = $(this).val();
       me.setRefer(v);
       me.data.ref = v;
@@ -456,11 +458,11 @@ class cApp
 
       // titleを追加
       data += ":title" + br;
-      data += form.title.val() + br;
+      data += me.admin.title.val() + br;
 
       // desc
       data += ":desc" + br;
-      data += form.desc.val() + br;
+      data += me.admin.desc.val() + br;
 
       // HTML
       data += ":html" + br;
@@ -476,7 +478,7 @@ class cApp
 
       // reference
       data += ":ref" + br;
-      data += form.ref.val() + br;
+      data += me.admin.ref.val() + br;
 
       // href要素にオブジェクトURLを指定することでダウンロードさせられる。
       var blob = new Blob([data], { "type" : "text/plain" });
@@ -666,6 +668,14 @@ class cApp
     this.setRefer(data.ref);
     this.answer.init(data);
     this.editors.reset();
+
+    // 管理者モードの場合のみ
+    if(this.isAdmin){
+      this.admin.title.val(data.title);
+      this.admin.desc.val(data.desc);
+      this.admin.ref.val(data.ref);
+      this.editors.reset(data);
+    }
   }
 
   /**
