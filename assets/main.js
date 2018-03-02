@@ -576,6 +576,13 @@ class cApp
     reader.onload = function(e){
       var data = me.data.loadQuestion(e.target.result);
       me.setQuestion(data);
+      // 管理者モードの場合のみ
+      if(me.isAdmin){
+        me.admin.title.val(data.title);
+        me.admin.desc.val(data.desc);
+        me.admin.ref.val(data.ref);
+        me.editors.reset(data);
+      }
     };
 
     reader.readAsText(f);
@@ -668,14 +675,6 @@ class cApp
     this.setRefer(data.ref);
     this.answer.init(data);
     this.editors.reset();
-
-    // 管理者モードの場合のみ
-    if(this.isAdmin){
-      this.admin.title.val(data.title);
-      this.admin.desc.val(data.desc);
-      this.admin.ref.val(data.ref);
-      this.editors.reset(data);
-    }
   }
 
   /**
