@@ -213,6 +213,15 @@ iframe:last-child{
   color:#0f0;
 }
 
+.markdown table {
+  border-top:1px solid #aaa;
+  border-left:1px solid #aaa;
+}
+.markdown table tr td{
+  border-bottom:1px solid #999;
+  border-right: 1px solid #999;
+}
+
 /* Ace Editorがreadonlyの時のスタイル。*/
 .ace_editor.readonly{
   background:#ddd;
