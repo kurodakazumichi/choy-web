@@ -238,6 +238,13 @@ class cEditors
   get j(){
     return this.e.j;
   }
+
+  /**
+  * リフレッシュ(内容が更新されないことがあるので強制的に更新する)
+  */
+  refresh(type){
+    this.e[type].setValue(this.e[type].getValue());
+  }
 }
 
 /*******************************************************************************
@@ -575,7 +582,11 @@ class cApp
   {
     // アクティブになったタブに含まれるエディターにfocusする。
     var id = '#' + ui.newPanel[0].id;
-    this.editors.focus($(id).data('type'));;
+
+    var type = $(id).data('type');
+    this.editors.refresh(type);
+    this.editors.focus(type);
+
   }
 
   /**
