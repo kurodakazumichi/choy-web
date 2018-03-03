@@ -255,7 +255,7 @@ class cData
     this.isLock = false;
 
     // 設問に含まれるパラメータリスト
-    this.QuestionParams = ['title', 'desc', 'html', 'css', 'js', 'ref'];
+    this.QuestionParams = ['title', 'desc', 'html', 'css', 'js', 'ref', 'mode'];
   }
 
   /**
@@ -426,8 +426,10 @@ class cApp
   */
   constructor()
   {
+    // URLパラメータを解析
     var p = this.parseUrlParams();
 
+    this.params  = p;
     this.tabs;
     this.data    = new cData();
     this.editors = new cEditors();
@@ -540,6 +542,10 @@ class cApp
       // reference
       data += ":ref" + br;
       data += me.admin.ref.val() + br;
+
+      // mode
+      data += ":mode" + br;
+      data += me.params.mode;
 
       // href要素にオブジェクトURLを指定することでダウンロードさせられる。
       var blob = new Blob([data], { "type" : "text/plain" });
@@ -733,6 +739,14 @@ class cApp
   */
   setQuestion(data)
   {
+    // 現在のモードと問題のモードが異なる場合は警告を出し問題をセットしない。
+    if(data.mode != this.params.mode)
+    {
+      var symbol = (this.params.len == 0)? '?' : '&';
+      alert("この問題は読み込むにはURLの末尾に" + symbol + "mode="+data.mode+"と指定し、再度お試しください。");
+      return;
+    }
+
     this.setTitle(data.title);
     this.setDesc(data.desc);
     this.setRefer(data.ref);
@@ -780,13 +794,15 @@ class cApp
   parseUrlParams()
   {
     // パラメータを初期化
-    var params = {admin:false, mode:""};
+    var params = {admin:false, mode:"", len:0};
 
     // URLパラメータがなければ終了
     if(!location.search) return params;
 
-
     var array = location.search.slice(1).split('&');
+
+    // 指定されたパラメータ数を保存
+    params.len = array.length;
 
     $.each(array, function(i, data)
     {
