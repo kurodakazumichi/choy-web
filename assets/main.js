@@ -10,6 +10,7 @@ class cIFrame
   constructor(id, mode)
   {
     this.id = id;
+    this.items = this.createItems();
     this.setMode(mode);
   }
 
@@ -78,24 +79,22 @@ class cIFrame
     this.js   = (data.js)? data.js : "";
   }
 
-  /** jQuery script tag */
-  get item_jQuery(){
-    return this.script('https://code.jquery.com/jquery-3.2.1.min.js');
-  }
-
-  /** ace script tab */
-  get item_ace(){
-    return this.script('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js');
+  createItems()
+  {
+    return {
+      jQuery : this.script('https://code.jquery.com/jquery-3.2.1.min.js'),
+      ace    : this.script('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js')
+    };
   }
 
   /** jQuery package */
   get pack_jQuery(){
-    return this.item_jQuery;
+    return this.items.jQuery;
   }
 
   /** Ace package */
   get pack_ace(){
-    return this.item_jQuery +  this.item_ace;
+    return this.items.jQuery + this.items.ace;
   }
 
   /**
