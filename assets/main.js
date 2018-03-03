@@ -7,30 +7,38 @@ class cIFrame
   * コンストラクタ
   * param id: iframe要素のidを指定すること。
   */
-  constructor(id)
+  constructor(id, mode)
   {
-    this.obj = $(id);
-    this.doc = this.obj[0].contentWindow.document;
+    this.id = id;
+    this.setMode(mode);
+  }
 
-    // iframe内でjqueryを使えるようにする。(とりあえず動いたがちゃんと理解してない。)
-    var html = '<head><script src="https://code.jquery.com/jquery-3.2.1.min.js"><\/script><\/head>';
-    this.doc.open();
-    this.doc.write(html);
-    this.doc.close();
+  /**
+  * iframe要素を返す
+  */
+  get obj(){
+    return $(this.id);
+  }
+
+  /**
+  *
+  */
+  get doc(){
+    return this.obj[0].contentWindow.document;
   }
 
   /*
   * iframeのhead要素(jquery object)を返す。
   */
   get head() {
-    return $(this.doc.head);
+    return $('head', this.doc);
   }
 
   /*
   * iframeのbody要素(jquery object)を返す。
   */
   get body() {
-    return $(this.doc.body);
+    return $('body', this.doc);
   }
 
   /*
@@ -68,6 +76,58 @@ class cIFrame
     this.html = (data.html)? data.html : "";
     this.css  = (data.css)? data.css : "";
     this.js   = (data.js)? data.js : "";
+  }
+
+  /** jQuery script tag */
+  get item_jQuery(){
+    return this.script('https://code.jquery.com/jquery-3.2.1.min.js');
+  }
+
+  /** ace script tab */
+  get item_ace(){
+    return this.script('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js');
+  }
+
+  /** jQuery package */
+  get pack_jQuery(){
+    return this.item_jQuery;
+  }
+
+  /** Ace package */
+  get pack_ace(){
+    return this.item_jQuery +  this.item_ace;
+  }
+
+  /**
+  * modeに対応したパッケージを取得する。(読み込むjavascriptのscriptタグリスト)
+  */
+  getPackage(mode)
+  {
+    var packName = 'pack_' + mode;
+    return (this[packName])? this[packName] : "";
+  }
+
+  /**
+  * iframeのモードを設定する。(使えるjavascript libraryが変化する)
+  */
+  setMode(mode)
+  {
+    var pack = this.getPackage(mode);
+
+    if(!pack) return;
+
+    // iframeの内容を書き換える。
+    var html = '<head>' + pack + '</head>';
+    this.doc.open();
+    this.doc.write(html);
+    this.doc.close();
+  }
+
+  /**
+  * scriptタグ文字列を生成
+  */
+  script(src){
+    return '<script src="' + src + '"></script>';
   }
 }
 
@@ -181,7 +241,8 @@ class cEditors
 }
 
 /*******************************************************************************
-* Dataクラス、設問やエディタの内容を永続的に保持する。
+* Dataクラス
+* 1.設問やエディタの内容を永続的に保持する。
 *******************************************************************************/
 class cData
 {
@@ -365,19 +426,19 @@ class cApp
   */
   constructor()
   {
+    var p = this.parseUrlParams();
+
     this.tabs;
-    this.editors = new cEditors();
-    this.preview = new cIFrame('#preview');
-    this.answer  = new cIFrame('#answer');
     this.data    = new cData();
+    this.editors = new cEditors();
+    this.preview = new cIFrame('#preview', p.mode);
+    this.answer  = new cIFrame('#answer', p.mode);
     this.title   = $('#title');
     this.desc    = $('#description');
     this.ref     = $('#reference-text');
 
+    this.isAdmin = p.admin;
     this.admin   = {};
-
-    // URL末尾に'?admin'がついていたら管理者モードにする。
-    this.isAdmin = (location.search == '?admin');
   }
 
   /**
@@ -711,6 +772,42 @@ class cApp
     this.data.clear();
     this.setQuestion(this.data.Q);
     this.editors.readonly = false;
+  }
+
+  /**
+  * URLパラメータをパースしたデータを取得する。
+  */
+  parseUrlParams()
+  {
+    // パラメータを初期化
+    var params = {admin:false, mode:""};
+
+    // URLパラメータがなければ終了
+    if(!location.search) return params;
+
+
+    var array = location.search.slice(1).split('&');
+
+    $.each(array, function(i, data)
+    {
+      // adminは存在したらもうtrue扱い
+      if(data == "admin") {
+        params.admin = true;
+        return;
+      }
+
+      // '='で分割しつつ、key=valになっていないものは処理しない。
+      var t = data.split('=');
+      if(t.length != 2) return;
+
+      // パラメータを保存
+      var key = t[0], val = t[1];
+      params[key] = val;
+
+    });
+
+    return params;
+
   }
 }
 $(function(){
