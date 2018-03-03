@@ -714,6 +714,7 @@ class cApp
         // データは変更しないようにロックする。
         me.data.lock();
         me.editors.reset(me.data.Q);
+        me.preview.js = me.editors.js;
         me.editors.readonly = true;
         $(this).data('mode', 'answer').text('Return to Question.');
       }
