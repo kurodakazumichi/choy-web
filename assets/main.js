@@ -740,7 +740,7 @@ class cApp
   setQuestion(data)
   {
     // 現在のモードと問題のモードが異なる場合は警告を出し問題をセットしない。
-    if(data.mode != this.params.mode)
+    if(data.mode != "" && data.mode != this.params.mode)
     {
       var symbol = (this.params.len == 0)? '?' : '&';
       alert("この問題は読み込むにはURLの末尾に" + symbol + "mode="+data.mode+"と指定し、再度お試しください。");
