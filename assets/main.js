@@ -593,6 +593,8 @@ class cApp
   */
   initMixed()
   {
+    var me = this;
+
     // 答えを見る機能の設定
     this.addEventChangeEditorMode();
 
@@ -711,7 +713,6 @@ class cApp
     this.editors.readonly = false;
   }
 }
-
 $(function(){
   (new cApp).init();
 });
