@@ -10,6 +10,7 @@ class cIFrame
   constructor(id, mode)
   {
     this.id = id;
+    this.mode = mode;
     this.items = this.createItems();
     this.setMode(mode);
   }
@@ -40,6 +41,14 @@ class cIFrame
   */
   get body() {
     return $('body', this.doc);
+  }
+
+  /**
+  * iframeをリロードする
+  */
+  reload(){
+    this.doc.location.reload(true);
+    this.setMode(this.mode);
   }
 
   /*
@@ -251,6 +260,17 @@ class cEditors
   refresh(type){
     if(!this.e[type]) return;
     this.e[type].setValue(this.e[type].getValue());
+  }
+
+  /**
+  * 全てのエディタデータを取得
+  */
+  get data(){
+    return {
+      html:this.html,
+      css :this.css,
+      js  :this.js
+    };
   }
 }
 
@@ -691,7 +711,8 @@ class cApp
 
     // JS実行機能の設定
     $('#apply-js').on('click', function(){
-      me.preview.js = me.editors.js;
+      me.preview.reload();
+      me.preview.init(me.editors.data);
     });
 
     // 解説のアコーディオン機能設定
