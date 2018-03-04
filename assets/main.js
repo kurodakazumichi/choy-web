@@ -94,7 +94,8 @@ class cIFrame
     return {
       jQuery : this.script('https://code.jquery.com/jquery-3.2.1.min.js'),
       ace    : this.script('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js'),
-      pixi   : this.script('https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.0/pixi.min.js')
+      pixi   : this.script('https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.0/pixi.min.js'),
+      three  : this.script('https://cdnjs.cloudflare.com/ajax/libs/three.js/90/three.min.js')
     };
   }
 
@@ -111,6 +112,11 @@ class cIFrame
   /** Pixi package */
   get pack_pixi(){
     return this.items.pixi;
+  }
+
+  /** Three package */
+  get pack_three(){
+    return this.items.three;
   }
 
   /**
