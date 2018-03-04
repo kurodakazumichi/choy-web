@@ -66,16 +66,20 @@
           </div>
         </div>
 
-        <div class="views">
-          <h2 class="ui-widget-header ui-corner-all">Preview</h2>
-          <iframe id="preview"></iframe>
-          <h2 class="ui-widget-header ui-corner-all">
-            <span>Answer</span>
+        <div id="views">
+          <ul>
+            <li><a href="#tabs-answer">Answer</a></li>
+            <li><a href="#tabs-preview">Preview</a></li>
+          </ul>
+          <div id="tabs-preview">
+            <iframe id="preview"></iframe>
+          </div>
+          <div id="tabs-answer">
+            <iframe id="answer"></iframe>
             <button id="change-answer-mode-1" title="htmlのみが有効になります。">HTML</button>
             <button id="change-answer-mode-2" title="htmlとCSSのみが有効になります。">HTML+CSS</button>
             <button id="change-answer-mode-3" title="htmlとCSSとJSが有効になります。">HTML+CSS+JS</button>
-          </h2>
-          <iframe id="answer"></iframe>
+          </div>
         </div>
       </div>
       <div id="reference">

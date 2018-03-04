@@ -516,6 +516,9 @@ class cApp
     // 自身のエイリアス
     var me = this;
 
+    // 管理者モードの場合は背景色を変える
+    $('#menubar').css('background', '#f34');
+
     // 管理者モードのみの入力項目を取得
     this.admin = {
       title: $('input[name=title]'),
@@ -604,6 +607,7 @@ class cApp
   initTab()
   {
     this.tabs = $("#editors").tabs();
+    $('#views').tabs();
     this.tabs.tabs({
       activate:this.onActivateTabs.bind(this)
     });
