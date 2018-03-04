@@ -83,7 +83,8 @@ class cIFrame
   {
     return {
       jQuery : this.script('https://code.jquery.com/jquery-3.2.1.min.js'),
-      ace    : this.script('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js')
+      ace    : this.script('https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js'),
+      pixi   : this.script('https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.0/pixi.min.js')
     };
   }
 
@@ -95,6 +96,11 @@ class cIFrame
   /** Ace package */
   get pack_ace(){
     return this.items.jQuery + this.items.ace;
+  }
+
+  /** Pixi package */
+  get pack_pixi(){
+    return this.items.pixi;
   }
 
   /**
@@ -242,6 +248,7 @@ class cEditors
   * リフレッシュ(内容が更新されないことがあるので強制的に更新する)
   */
   refresh(type){
+    if(!this.e[type]) return;
     this.e[type].setValue(this.e[type].getValue());
   }
 }
