@@ -83,6 +83,7 @@ class cIFrame
   init(data)
   {
     data = (!data)? {} : data;
+    this.reload();
     this.html = (data.html)? data.html : "";
     this.css  = (data.css)? data.css : "";
     this.js   = (data.js)? data.js : "";
@@ -711,7 +712,6 @@ class cApp
 
     // JS実行機能の設定
     $('#apply-js').on('click', function(){
-      me.preview.reload();
       me.preview.init(me.editors.data);
     });
 
@@ -735,6 +735,7 @@ class cApp
       if($(this).data('mode') == "answer") {
         me.editors.reset(me.data.E);
         me.editors.readonly = false;
+        me.preview.init(me.data.E);
         me.data.unlock();
         $(this).data('mode', '').text('See the Answer.');
 
@@ -791,7 +792,6 @@ class cApp
     this.setDesc(data.desc);
     this.setRefer(data.ref);
     this.answer.init(data);
-    this.answer.js = data.js;
     this.editors.reset();
   }
 
