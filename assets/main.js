@@ -803,8 +803,7 @@ class cApp
   refresh()
   {
     this.data.clear();
-    this.setQuestion(this.data.Q);
-    this.editors.readonly = false;
+    location.reload();
   }
 
   /**
