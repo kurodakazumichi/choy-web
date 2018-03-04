@@ -381,6 +381,11 @@ class cData
     $.each(this.QuestionParams, function(i, val){
       data[val] = this.get('question.' + val);
     }.bind(this));
+
+    // 整形
+    data.title = data.title.replace(/\r?\n/g,"");
+    data.mode  = data.mode.replace(/\r?\n/g,"");
+
     return data;
   }
 
@@ -691,16 +696,28 @@ class cApp
       .on('dragenter', function(e){ cfn(e, this); })
       .on('dragleave', function(e){ cfn(e, this); })
       .on('dragover' , function(e){ cfn(e, null); })
-      .on('drop'     , function(e){ cfn(e, this); me.loadfile(e); });
+      .on('drop'     , function(e){ cfn(e, this); me.loadfile(e, "drop"); });
+
+    // ファイル選択フォーム
+    var file = $('#file').on('change', function(e){ me.loadfile(e, "input"); });
   }
 
   /**
   * 問題ファイルのロード処理
   */
-  loadfile(e)
+  loadfile(e, action)
   {
     var me = this;
-    var f = e.originalEvent.dataTransfer.files[0];
+
+    // ファイルを取得
+    var f;
+
+    switch(action){
+      case 'drop' : f = e.originalEvent.dataTransfer.files[0]; break;
+      case 'input': f = e.target.files[0]; break;
+    }
+
+    // ファイルロード
     var reader = new FileReader();
 
     reader.onload = function(e){
