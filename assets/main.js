@@ -769,6 +769,7 @@ class cApp
     this.setDesc(data.desc);
     this.setRefer(data.ref);
     this.answer.init(data);
+    this.answer.js = data.js;
     this.editors.reset();
   }
 
