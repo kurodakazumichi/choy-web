@@ -169,6 +169,7 @@ class cEditors
   {
     var e = ace.edit(id);
     e.getSession().setMode('ace/mode/'+mode);
+    e.getSession().setTabSize(2);
     e.$blockScrolling = Infinity;
     return e;
   }
