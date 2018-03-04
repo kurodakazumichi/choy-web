@@ -168,11 +168,11 @@ class cEditors
   /**
   * 初期化、html,css,jsの3つのエディターを作成する。
   */
-  init()
+  init(id)
   {
-    this.e.h = this.create("html-editor", "html");
-    this.e.c = this.create("css-editor" , "css");
-    this.e.j = this.create("js-editor"  , "javascript");
+    this.e.h = this.create(id.html, "html");
+    this.e.c = this.create(id.css , "css");
+    this.e.j = this.create(id.js  , "javascript");
     this.status  = $('#editors-status');
   }
 
@@ -474,6 +474,7 @@ class cApp
     this.tabs;
     this.data    = new cData();
     this.editors = new cEditors();
+    this.answers = new cEditors();
     this.preview = new cIFrame('#preview', p.mode);
     this.answer  = new cIFrame('#answer', p.mode);
     this.title   = $('#title');
@@ -494,12 +495,15 @@ class cApp
     this.initAdmin();
     this.initTab();     // ※Editor生成より前にTab処理を済ませないとおかしくなる。
     this.initEditors();
+    this.initAnswers();
     this.initLoader();
     this.initMixed();
 
     // 設問やエディタの状態を整える。(sessionデータがあればそこから復元される)
     this.setQuestion(this.data.Q);
     this.editors.reset(this.data.E);
+    this.answers.reset(this.data.Q);
+
     this.editors.focus('h');
   }
 
@@ -608,6 +612,7 @@ class cApp
   {
     this.tabs = $("#editors").tabs();
     $('#views').tabs();
+    $('#answers').tabs();
     this.tabs.tabs({
       activate:this.onActivateTabs.bind(this)
     });
@@ -632,7 +637,7 @@ class cApp
   */
   initEditors()
   {
-    this.editors.init();
+    this.editors.init({html:"html-editor", css:"css-editor", js:"js-editor"});
     this.addEventEditors();
   }
 
@@ -656,6 +661,15 @@ class cApp
     this.editors.j.on('change', function(){
       me.data.js = me.editors.js;
     });
+  }
+
+  /**
+  * Answersの初期化
+  */
+  initAnswers()
+  {
+    this.answers.init({html:"html-answer", css:"css-answer", js:"js-answer"});
+    this.answers.readonly = true;
   }
 
   /**
@@ -742,21 +756,12 @@ class cApp
     // 答えを見る機能の実装
     $("#change-editor-mode").on('click', function(){
 
+      $('#answers').toggle();
+
       if($(this).data('mode') == "answer") {
-        me.editors.reset(me.data.E);
-        me.editors.readonly = false;
-        me.preview.init(me.data.E);
-        me.data.unlock();
-        $(this).data('mode', '').text('See the Answer.');
-
+        $(this).data('mode', '').text('Show Answer.');
       } else {
-
-        // データは変更しないようにロックする。
-        me.data.lock();
-        me.editors.reset(me.data.Q);
-        me.preview.js = me.editors.js;
-        me.editors.readonly = true;
-        $(this).data('mode', 'answer').text('Return to Question.');
+        $(this).data('mode', 'answer').text('Hide Answer.');
       }
 
     });
@@ -803,6 +808,7 @@ class cApp
     this.setRefer(data.ref);
     this.answer.init(data);
     this.editors.reset();
+    this.answers.reset(data);
   }
 
   /**

@@ -15,8 +15,7 @@
   <body>
     <div id="menubar">
       <div class="left">
-        <a id="change-editor-mode" class="button">See the Answer.</a>
-        <b id="editors-status">Editor::</b>
+        <a id="change-editor-mode" class="button">Show Answer.</a>
       </div>
       <div class="center">
         <div id="loader">
@@ -29,8 +28,6 @@
       </div>
     </div>
     <div id="wrapper">
-
-
       <h1 id="title" class="ui-widget-header ui-corner-all">no data</h1>
       <div id="description" class="markdown">no data</div>
 
@@ -49,7 +46,7 @@
               <div class="editor" id="js-editor"></div>
               <button id="apply-js">実行</button>
             </div>
-            <div id="tags-admin" class="admin">
+            <div id="tabs-admin" class="admin">
               <div>
                 <label for="title">タイトル</label>
                 <input type="text" name="title" autocomplete="off">
@@ -64,6 +61,17 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div id="answers" style="display:none;">
+          <ul>
+            <li><a href="#tabs-ans-html">HTML</a></li>
+            <li><a href="#tabs-ans-css">CSS</a></li>
+            <li><a href="#tabs-ans-js">JS</a></li>
+          </ul>
+          <div id="tabs-ans-html"><div class="editor" id="html-answer"></div></div>
+          <div id="tabs-ans-css"><div class="editor" id="css-answer"></div></div>
+          <div id="tabs-ans-js"><div class="editor" id="js-answer"></div></div>
         </div>
 
         <div id="views">
@@ -87,7 +95,5 @@
         <div id="reference-text" class="markdown" style="display:none;">no data</div>
       </div>
     </div>
-
-
   </body>
 </html>

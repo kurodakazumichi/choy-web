@@ -67,20 +67,6 @@ body{
   box-shadow: 0 0 3px 3px #ff0;
 }
 
-/* エディターの状態テキスト */
-#editors-status{
-  font-size: 12px;
-}
-#editors-status::after{
-  content: "editable";
-  color:#0ff;
-}
-#editors-status.readonly::after{
-  content:"readonly";
-  color:#f00;
-}
-
-
 /* 全体を包むラッパー */
 #wrapper {
   padding:1em;
