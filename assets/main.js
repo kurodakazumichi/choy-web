@@ -83,15 +83,13 @@ class cIFrame
   {
     data = (!data)? {} : data;
     this.reload();
+    me.setMode(this.mode);
     var me = this;
     this.obj.on('load', function(){
       me.html = (data.html)? data.html : "";
       me.css  = (data.css)? data.css : "";
       me.js   = (data.js)? data.js : "";
-      me.setMode(this.mode);
     });
-
-
   }
 
   createItems()
