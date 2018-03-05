@@ -48,7 +48,6 @@ class cIFrame
   */
   reload(){
     this.doc.location.reload(true);
-    this.setMode(this.mode);
   }
 
   /*
@@ -84,15 +83,15 @@ class cIFrame
   {
     data = (!data)? {} : data;
     this.reload();
+    var me = this;
     this.obj.on('load', function(){
-      this.html = (data.html)? data.html : "";
-      this.css  = (data.css)? data.css : "";
-      this.js   = (data.js)? data.js : "";
+      me.html = (data.html)? data.html : "";
+      me.css  = (data.css)? data.css : "";
+      me.js   = (data.js)? data.js : "";
+      me.setMode(this.mode);
     });
 
-    this.html = (data.html)? data.html : "";
-    this.css  = (data.css)? data.css : "";
-    this.js   = (data.js)? data.js : "";
+
   }
 
   createItems()
@@ -796,16 +795,15 @@ class cApp
   addEventChangeAnswerMode()
   {
     var me = this;
+
     $('#change-answer-mode-1').on('click', function(){
-      me.answer.init();
-      me.answer.html = me.data.Q.html;
+      var Q = me.data.Q;
+      me.answer.init({html:Q.html});
     });
 
     $('#change-answer-mode-2').on('click', function(){
-      var Q = me.data.Q;
-      me.answer.init();
-      me.answer.html = Q.html;
-      me.answer.css  = Q.css;
+      var Q  = me.data.Q;
+      me.answer.init({html:Q.html, css:Q.css});
     });
 
     $('#change-answer-mode-3').on('click', function(){
