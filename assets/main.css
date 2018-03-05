@@ -67,11 +67,6 @@ body{
   box-shadow: 0 0 3px 3px #ff0;
 }
 
-/* ファイルフォーム */
-#file {
-  font-size: 11px;
-}
-
 /* 全体を包むラッパー */
 #wrapper {
   padding:1em;
