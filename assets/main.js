@@ -9,10 +9,21 @@ class cIFrame
   */
   constructor(id, mode)
   {
+    var me = this;
+
     this.id = id;
     this.mode = mode;
     this.items = this.createItems();
     this.setMode(mode);
+
+    this.tmp = {}; // 一時保存領域、iframeのonload時に参照する。
+
+    // iframeの読み込みが完了してからコードを挿入する。
+    this.obj.on('load', function(){
+      me.html = (me.tmp.html)? me.tmp.html : "";
+      me.css  = (me.tmp.css)? me.tmp.css : "";
+      me.js   = (me.tmp.js)? me.tmp.js : "";
+    });
   }
 
   /**
@@ -83,10 +94,11 @@ class cIFrame
   init(data)
   {
     data = (!data)? {} : data;
+    this.tmp = data;
     this.reload();
-    this.html = (data.html)? data.html : "";
-    this.css  = (data.css)? data.css : "";
-    this.js   = (data.js)? data.js : "";
+    // this.html = (data.html)? data.html : "";
+    // this.css  = (data.css)? data.css : "";
+    // this.js   = (data.js)? data.js : "";
   }
 
   createItems()
