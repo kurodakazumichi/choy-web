@@ -350,7 +350,13 @@ class cData
     sessionStorage.clear();
   }
 
-  loadQuestion(f){
+  /**
+  * 設問ファイルをロード。
+  */
+  loadQuestion(f)
+  {
+    this.clear();
+
     var text = f.split(/\r\n|\r|\n/);
     var data = {};
     var section = null;
@@ -404,12 +410,15 @@ class cData
   /**
   * 保存したエディターデータを取得する。
   */
-  get E(){
-    return {
-      html:this.html,
-      css :this.css,
-      js  :this.js
-    }
+  get E()
+  {
+    var data = {};
+
+    $.each(this.QuestionParams, function(i, val){
+      data[val] = this[val];
+    }.bind(this));
+
+    return data;
   }
 
   /**
@@ -472,6 +481,21 @@ class cData
     return this.get('ref');
   }
 
+  /**
+  * d1とd2を結合し、データがある方を優先する。d1、d2どちらもデータがある場合はd1を優先する。
+  */
+  concat(d1, d2)
+  {
+    var ret = {};
+
+    $.each(this.QuestionParams, function(i, val)
+    {
+      ret[val] = (d1[val])? d1[val] : d2[val]
+    });
+
+    return ret;
+  }
+
 }
 
 /*******************************************************************************
@@ -517,9 +541,7 @@ class cApp
     this.initMixed();
 
     // 設問やエディタの状態を整える。(sessionデータがあればそこから復元される)
-    this.setQuestion(this.data.Q);
-    this.editors.reset(this.data.E);
-    this.answers.reset(this.data.Q);
+    this.setQuestion(this.data);
 
     this.editors.focus('h');
   }
@@ -732,19 +754,34 @@ class cApp
     // ファイルロード
     var reader = new FileReader();
 
-    reader.onload = function(e){
+    reader.onload = function(e)
+    {
       var data = me.data.loadQuestion(e.target.result);
-      me.setQuestion(data);
-      // 管理者モードの場合のみ
-      if(me.isAdmin){
-        me.admin.title.val(data.title);
-        me.admin.desc.val(data.desc);
-        me.admin.ref.val(data.ref);
-        me.editors.reset(data);
-      }
+      location.href = me.toUrl(data);
     };
 
     reader.readAsText(f);
+  }
+
+  /**
+  * 設問データを表示するのに適したURLに変換
+  */
+  toUrl(data)
+  {
+    // パラメータなしのURLを取得
+    var idx = location.href.indexOf('?');
+    var url = location.href;
+    url = (idx < 0)? url : url.substr(0, idx);
+
+    // URLパラメータを作成
+    var query = [];
+    if(this.isAdmin)　  query.push("admin");
+    if(data.mode != "") query.push("mode=" + data.mode);
+    query = query.join('&');
+
+    // URLの返却
+    url = (query)? url + "?" + query : url;
+    return url;
   }
 
   /**
@@ -824,21 +861,35 @@ class cApp
   */
   setQuestion(data)
   {
+    var Q = data.Q;
+    var E = data.E;
+
     // 現在のモードと問題のモードが異なる場合は警告を出し問題をセットしない。
-    if(data.mode != "" && data.mode != this.params.mode)
+    if(Q.mode != "" && Q.mode != this.params.mode)
     {
       var symbol = (this.params.len == 0)? '?' : '&';
-      alert("この問題は読み込むにはURLの末尾に" + symbol + "mode="+data.mode+"と指定し、再度お試しください。");
+      alert("この問題は読み込むにはURLの末尾に" + symbol + "mode="+Q.mode+"と指定し、再度お試しください。");
       return;
     }
 
-    this.setTitle(data.title);
-    this.setDesc(data.desc);
-    this.setRefer(data.ref);
-    this.answer.init(data);
-    this.preview.init();
-    this.editors.reset();
-    this.answers.reset(data);
+    // 編集データと設問データを結合
+    var MIX = this.data.concat(E, Q);
+
+    this.setTitle((this.isAdmin)? MIX.title : Q.title);
+    this.setDesc ((this.isAdmin)? MIX.desc  : Q.desc);
+    this.setRefer((this.isAdmin)? MIX.ref   : Q.ref);
+
+    this.editors.reset((this.isAdmin)? MIX : E);
+    this.answers.reset((this.isAdmin)? MIX : Q);
+    this.preview.init ((this.isAdmin)? MIX : E);
+    this.answer.init  ((this.isAdmin)? MIX : Q);
+
+    // 管理者モードのみ
+    if(this.isAdmin){
+      this.admin.title.val(MIX.title);
+      this.admin.desc.val(MIX.desc);
+      this.admin.ref.val(MIX.ref);
+    }
   }
 
   /**
