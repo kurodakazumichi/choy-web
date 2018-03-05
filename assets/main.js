@@ -84,6 +84,12 @@ class cIFrame
   {
     data = (!data)? {} : data;
     this.reload();
+    this.obj.on('load', function(){
+      this.html = (data.html)? data.html : "";
+      this.css  = (data.css)? data.css : "";
+      this.js   = (data.js)? data.js : "";
+    });
+
     this.html = (data.html)? data.html : "";
     this.css  = (data.css)? data.css : "";
     this.js   = (data.js)? data.js : "";
