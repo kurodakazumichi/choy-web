@@ -496,6 +496,15 @@ class cData
     return ret;
   }
 
+  /** アクティブなタブの番号 */
+  getTab(type){
+    return this.get('tabs.' + type);
+  }
+
+  setTab(type, no){
+    this.set('tabs.' + type, no);
+  }
+
 }
 
 /*******************************************************************************
@@ -512,7 +521,7 @@ class cApp
     var p = this.parseUrlParams();
 
     this.params  = p;
-    this.tabs;
+    this.tabs    = {};
     this.data    = new cData();
     this.editors = new cEditors();
     this.answers = new cEditors();
@@ -649,11 +658,26 @@ class cApp
   */
   initTab()
   {
-    this.tabs = $("#editors").tabs();
-    $('#views').tabs();
-    $('#answers').tabs();
-    this.tabs.tabs({
+    this.tabs.editor = $("#editors").tabs({active:this.data.getTab('editor')});
+    this.tabs.answer = $('#answers').tabs({active:this.data.getTab('answer')});
+    this.tabs.iframe = $('#views').tabs({active:this.data.getTab('iframe')});
+
+    this.tabs.editor.tabs({
       activate:this.onActivateTabs.bind(this)
+    });
+
+    this.tabs.answer.tabs({
+      activate:function(e, ui){
+        var active = $(e.target).tabs( "option", "active" );
+        this.data.setTab('answer', active);
+      }.bind(this)
+    });
+
+    this.tabs.iframe.tabs({
+      activate:function(e, ui){
+        var active = $(e.target).tabs( "option", "active" );
+        this.data.setTab('iframe', active);
+      }.bind(this)
     });
   }
 
@@ -669,6 +693,10 @@ class cApp
     this.editors.refresh(type);
     this.editors.focus(type);
 
+    // activeになったTabの番号を保存
+
+    var active = $(e.target).tabs( "option", "active" );
+    this.data.setTab('editor', active);
   }
 
   /**
@@ -802,7 +830,7 @@ class cApp
 
     // JS実行機能の設定
     $('#apply-js').on('click', function(){
-      me.preview.init(me.editors.data);
+      location.reload();
     });
 
     // 解説のアコーディオン機能設定
